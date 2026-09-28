@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Bus Pass Management System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #222;
+        }
+
+        /* HEADER */
+        header {
+            background: #0d47a1;
+            color: white;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(rgba(13,71,161,0.85), rgba(25,118,210,0.85)),
+                        url("https://images.unsplash.com/photo-1544620347-c4fd4a3d5957");
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 90px 20px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            background: #ff9800;
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #e68900;
+        }
+
+        /* SECTION */
+        section {
+            padding: 50px 8%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #0d47a1;
+        }
+
+        /* CARDS */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .card h3 {
+            color: #0d47a1;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* FORMS */
+        .form-container {
+            max-width: 850px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        textarea {
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #1976d2;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .form-submit {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* PASS STATUS */
+        .status-box {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .search-box input {
+            flex: 1;
+        }
+
+        .status-result {
+            display: none;
+            background: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .status-result p {
+            margin: 8px 0;
+        }
+
+        /* ROUTES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+        }
+
+        th,
+        td {
+            padding: 13px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #0d47a1;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f5f5f5;
+        }
+
+        /* LOGIN */
+        .login-box {
+            max-width: 450px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+
+        .login-box h2 {
+            text-align: center;
+            color: #0d47a1;
+            margin-bottom: 25px;
+        }
+
+        .login-box input {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        /* FEATURES */
+        .feature-card {
+            text-align: left;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 8px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #0d47a1;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        footer p {
+            margin: 5px;
+        }
+
+        /* RESPONSIVE */
+        @media(max-width: 700px) {
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            nav a {
+                margin: 0 7px;
+                font-size: 13px;
+            }
+
+            .hero h1 {
+                font-size: 30px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            table {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+
+    <div class="logo">
+        🚌 Smart Bus Pass
+    </div>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#apply">Apply Pass</a>
+        <a href="#status">Status</a>
+        <a href="#routes">Routes</a>
+        <a href="#login">Login</a>
+    </nav>
+
+</header>
+
+
+<!-- HOME -->
+<section class="hero" id="home">
+
+    <h1>Smart Bus Pass Management System</h1>
+
+    <p>
+        Apply, manage and track your bus pass online easily.
+    </p>
+
+    <button class="btn" onclick="goToApply()">
+        Apply for Bus Pass
+    </button>
+
+</section>
+
+
+<!-- FEATURES -->
+<section>
+
+    <h2 class="section-title">Our Services</h2>
+
+    <div class="cards">
+
+        <div class="card feature-card">
+            <h3>📝 Online Application</h3>
+            <p>
+                Apply for your bus pass online without visiting the office.
+            </p>
+        </div>
+
+        <div class="card feature-card">
+            <h3>🔍 Pass Status</h3>
+            <p>
+                Check your application and pass status using your application ID.
+            </p>
+        </div>
+
+        <div class="card feature-card">
+            <h3>🚌 Bus Routes</h3>
+            <p>
+                View available bus routes, source, destination and timings.
+            </p>
+        </div>
+
+        <div class="card feature-card">
+            <h3>💳 Online Payment</h3>
+            <p>
+                Pay your bus pass fee through a simple online payment interface.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- APPLY PASS -->
+<section id="apply">
+
+    <h2 class="section-title">Bus Pass Application</h2>
+
+    <div class="form-container">
+
+        <form id="passForm">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="name" placeholder="Enter full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Mobile Number</label>
+                    <input type="tel" id="mobile"
+                           placeholder="Enter mobile number"
+                           pattern="[0-9]{10}"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email"
+                           placeholder="Enter email"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" id="dob" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Gender</label>
+
+                    <select id="gender" required>
+                        <option value="">Select Gender</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Other</option>
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+                    <label>Pass Type</label>
+
+                    <select id="passType" required>
+
+                        <option value="">
+                            Select Pass Type
+                        </option>
+
+                        <option value="Student">
+                            Student Pass - ₹500
+                        </option>
+
+                        <option value="Monthly">
+                            Monthly Pass - ₹1000
+                        </option>
+
+                        <option value="Quarterly">
+                            Quarterly Pass - ₹2700
+                        </option>
+
+                        <option value="Annual">
+                            Annual Pass - ₹10000
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+                    <label>Source</label>
+
+                    <select id="source" required>
+
+                        <option value="">
+                            Select Source
+                        </option>
+
+                        <option>Pune</option>
+                        <option>Sangli</option>
+                        <option>Miraj</option>
+                        <option>Kolhapur</option>
+                        <option>Satara</option>
+                        <option>Nashik</option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+                    <label>Destination</label>
+
+                    <select id="destination" required>
+
+                        <option value="">
+                            Select Destination
+                        </option>
+
+                        <option>Pune</option>
+                        <option>Sangli</option>
+                        <option>Miraj</option>
+                        <option>Kolhapur</option>
+                        <option>Satara</option>
+                        <option>Nashik</option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group full">
+
+                    <label>Address</label>
+
+                    <textarea id="address"
+                              rows="3"
+                              placeholder="Enter your address"
+                              required></textarea>
+
+                </div>
+
+                <div class="form-group full">
+
+                    <label>Upload ID Proof</label>
+
+                    <input type="file"
+                           id="idProof"
+                           accept=".jpg,.jpeg,.png,.pdf"
+                           required>
+
+                </div>
+
+            </div>
+
+            <div class="form-submit">
+
+                <button type="submit" class="btn">
+                    Submit Application
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- APPLICATION RESULT -->
+<section id="applicationResult" style="display:none;">
+
+    <h2 class="section-title">
+        Application Submitted
+    </h2>
+
+    <div class="status-box">
+
+        <h3>Application Successful! ✅</h3>
+
+        <br>
+
+        <p>
+            Your application has been submitted successfully.
+        </p>
+
+        <p>
+            <strong>Application ID:</strong>
+            <span id="generatedId"></span>
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+            <span style="color:orange;">
+                Pending Verification
+            </span>
+        </p>
+
+        <br>
+
+        <button class="btn" onclick="goToStatus()">
+            Check Status
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- STATUS -->
+<section id="status">
+
+    <h2 class="section-title">
+        Check Bus Pass Status
+    </h2>
+
+    <div class="status-box">
+
+        <div class="search-box">
+
+            <input type="text"
+                   id="applicationId"
+                   placeholder="Enter Application ID">
+
+            <button class="btn"
+                    onclick="checkStatus()">
+                Search
+            </button>
+
+        </div>
+
+        <div class="status-result"
+             id="statusResult">
+
+            <h3>Application Details</h3>
+
+            <p>
+                <strong>Application ID:</strong>
+                <span id="showId"></span>
+            </p>
+
+            <p>
+                <strong>Name:</strong>
+                <span id="showName"></span>
+            </p>
+
+            <p>
+                <strong>Pass Type:</strong>
+                <span id="showPass"></span>
+            </p>
+
+            <p>
+                <strong>Route:</strong>
+                <span id="showRoute"></span>
+            </p>
+
+            <p>
+                <strong>Status:</strong>
+                <span style="color:green;">
+                    Approved
+                </span>
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ROUTES -->
+<section id="routes">
+
+    <h2 class="section-title">
+        Available Bus Routes
+    </h2>
+
+    <div style="overflow-x:auto;">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Route ID</th>
+                    <th>Source</th>
+                    <th>Destination</th>
+                    <th>Bus Type</th>
+                    <th>Departure</th>
+                    <th>Arrival</th>
+                    <th>Fare</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>R001</td>
+                    <td>Sangli</td>
+                    <td>Miraj</td>
+                    <td>Express</td>
+                    <td>08:00 AM</td>
+                    <td>08:40 AM</td>
+                    <td>₹30</td>
+                </tr>
+
+                <tr>
+                    <td>R002</td>
+                    <td>Sangli</td>
+                    <td>Kolhapur</td>
+                    <td>Express</td>
+                    <td>09:00 AM</td>
+                    <td>10:30 AM</td>
+                    <td>₹80</td>
+                </tr>
+
+                <tr>
+                    <td>R003</td>
+                    <td>Pune</td>
+                    <td>Satara</td>
+                    <td>Ordinary</td>
+                    <td>07:30 AM</td>
+                    <td>10:00 AM</td>
+                    <td>₹120</td>
+                </tr>
+
+                <tr>
+                    <td>R004</td>
+                    <td>Pune</td>
+                    <td>Nashik</td>
+                    <td>Express</td>
+                    <td>06:30 AM</td>
+                    <td>11:00 AM</td>
+                    <td>₹250</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+<!-- LOGIN -->
+<section id="login">
+
+    <h2 class="section-title">
+        User Login
+    </h2>
+
+    <div class="login-box">
+
+        <h2>Login</h2>
+
+        <form id="loginForm">
+
+            <label>Email / Mobile</label>
+
+            <input type="text"
+                   id="loginUser"
+                   placeholder="Enter email or mobile"
+                   required>
+
+            <label>Password</label>
+
+            <input type="password"
+                   id="loginPassword"
+                   placeholder="Enter password"
+                   required>
+
+            <button type="submit"
+                    class="btn"
+                    style="width:100%;">
+                Login
+            </button>
+
+        </form>
+
+        <p style="text-align:center; margin-top:15px;">
+            New user?
+            <a href="#apply">
+                Apply for a Bus Pass
+            </a>
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+
+    <p>
+        © 2026 Smart Bus Pass Management System
+    </p>
+
+    <p>
+        Developed as a B.Sc. IT Project
+    </p>
+
+</footer>
+
+
+<script>
+
+    // Scroll to Application
+    function goToApply() {
+
+        document.getElementById("apply")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    }
+
+
+    // Scroll to Status
+    function goToStatus() {
+
+        document.getElementById("status")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    }
+
+
+    // Generate Application ID
+    function generateApplicationId() {
+
+        let number =
+            Math.floor(1000 + Math.random() * 9000);
+
+        return "BP2026" + number;
+
+    }
+
+
+    // Pass Application
+    document.getElementById("passForm")
+        .addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            let name =
+                document.getElementById("name").value;
+
+            let passType =
+                document.getElementById("passType").value;
+
+            let source =
+                document.getElementById("source").value;
+
+            let destination =
+                document.getElementById("destination").value;
+
+            let applicationId =
+                generateApplicationId();
+
+
+            // Store data in browser
+            let application = {
+
+                id: applicationId,
+                name: name,
+                passType: passType,
+                source: source,
+                destination: destination,
+                status: "Pending Verification"
+
+            };
+
+
+            localStorage.setItem(
+                "busApplication",
+                JSON.stringify(application)
+            );
+
+
+            document.getElementById("generatedId")
+                .innerText = applicationId;
+
+
+            document.getElementById("applicationResult")
+                .style.display = "block";
+
+
+            document.getElementById("applicationResult")
+                .scrollIntoView({
+                    behavior: "smooth"
+                });
+
+
+            alert(
+                "Application submitted successfully!"
+            );
+
+        });
+
+
+    // Check Status
+    function checkStatus() {
+
+        let enteredId =
+            document.getElementById("applicationId")
+                .value.trim();
+
+
+        let savedData =
+            localStorage.getItem("busApplication");
+
+
+        if (!savedData) {
+
+            alert(
+                "No application found. Please apply first."
+            );
+
+            return;
+
+        }
+
+
+        let application =
+            JSON.parse(savedData);
+
+
+        if (enteredId === application.id) {
+
+            document.getElementById("showId")
+                .innerText = application.id;
+
+            document.getElementById("showName")
+                .innerText = application.name;
+
+            document.getElementById("showPass")
+                .innerText = application.passType;
+
+            document.getElementById("showRoute")
+                .innerText =
+                application.source +
+                " → " +
+                application.destination;
+
+
+            document.getElementById("statusResult")
+                .style.display = "block";
+
+        }
+
+        else {
+
+            alert(
+                "Invalid Application ID!"
+            );
+
+        }
+
+    }
+
+
+    // Login
+    document.getElementById("loginForm")
+        .addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            let username =
+                document.getElementById("loginUser").value;
+
+            let password =
+                document.getElementById("loginPassword").value;
+
+
+            if (username !== "" && password !== "") {
+
+                alert(
+                    "Login successful!"
+                );
+
+            }
+
+        });
+
+</script>
+
+</body>
+</html>
